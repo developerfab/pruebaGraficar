@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+	<!-- ESTILO DE LA GRAFICA -->
+	<style>
+
+	.lienzo rect {
+	  fill: steelblue;
+	}
+
+	.lienzo text {
+	  fill: white;
+	  font: 10px sans-serif;
+	  text-anchor: middle;
+	}
+
+	</style>
+	<!-- GRAFICADOR -->
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<svg class="lienzo"></svg>
+	<script src="js/solicitud.js"></script>
+	<script type="text/javascript">
+	var s = "http://localhost:3000/api/datas/200?key=asdf&year=2008";
+	solicitud(s);
+	</script>
+	
+	<title>PRUEBA 2</title>
+</head>
+<body>
+
+</body>
+</html>
