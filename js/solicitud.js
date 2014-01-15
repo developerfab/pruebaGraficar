@@ -20,21 +20,21 @@ function solicitud(frase){
 		for(j=largo_subllave-1;j>=0;j--){
 			//console.log(i,j,contenedor[i][j]);
 			aux = contenedor[i][j][1];
-			carga(aux,asig_color(contenedor[i][j][0]),cant_datos,i);
+			carga(aux,asig_color(contenedor[i][j][0]),cant_datos,i,contenedor[cant_datos-1][largo_subllave-1][1]);
 		}
 	}
 	//$.get(frase,carga);
 }
 function cargar_bar(lienzo,data,pos_dato,barWidth){
 	if(bar!=null){
-		bar=bar.data([data])
+		bar=bar.data(data)
 	    	.enter().append("g")
 	    	.attr("transform", function(d) {return "translate(" + pos_dato * barWidth + ",0)"; });
 		return bar;
 	}
 	else{
 		bar = lienzo.selectAll("g")
-	    	.data([data])
+	    	.data(data)
 	    	.enter().append("g")
 	    	.attr("transform", function(d) {return "translate(" + pos_dato * barWidth + ",0)"; });
 	   	return bar;
@@ -43,12 +43,16 @@ function cargar_bar(lienzo,data,pos_dato,barWidth){
 }
 /** carga
 * Esta funcion se encarga de graficar los datos enviados a través del parametro
-* data.
+* dato: Es el valor a graficar
+* color: color del que se graficara el valor
+* cant_datos: es la cantidad de datos a lo largo del eje x a graficar (dominio)
+* pos_dato: es la posicion del dato en la que se debe graficar
+* maximo: Es el mayor de todos los datos, su funcion es establecer la regla para determinar el rango
 */
-function carga(data,color,cant_datos,pos_dato){
+function carga(dato,color,cant_datos,pos_dato,maximo){
 //Tamaño del lienzo	
 	//console.log(data, color,cant_datos,pos_dato);
-
+	var data = [dato]
 	var width = 960,
     	height = 500;
 
@@ -69,16 +73,15 @@ function carga(data,color,cant_datos,pos_dato){
 	}*/
 	//--------------------- GRAFICACION ---------------------------
 	//dominio de la grafica
-	y.domain([0, cant_datos/*d3.max(data, function(d) { return d; })*/]);
+	y.domain([0, /*cant_datosd3.max(data, function(d) { return d; })*/maximo]);
 	var barWidth = width / /*Object.keys(data).length;*/cant_datos;
-	console.log('barWidth: '+barWidth);
+	
 	cargar_bar(lienzo,data,pos_dato,barWidth);
 	
-	console.log('bar: '+bar);
 	bar.append("rect")
 	    .attr("class", color)
-	    .attr("y", function(d) {var n = y(d);console.log('n: '+n); return n; })
-	    .attr("height", function(d) { var x=height-y(d);console.log('x: '+x);return x; })
+	    .attr("y", function(d) { return y(d); })
+	    .attr("height", function(d) { console.log('d: '+d);return height-y(d); })
 	    .attr("width", barWidth - 1);
 	 
 	bar.append("text")
