@@ -9,6 +9,21 @@
 	.rojo{
 		fill:red;
 	}
+	.verde{
+		fill:green;
+	}
+	.amarillo{
+		fill:yellow;
+	}
+	.morado{
+		fill:violet;
+	}
+	.rosa{
+		fill:pink;
+	}
+	.negro{
+		fill:black;
+	}
 	.lienzo text {
 	  fill: white;
 	  font: 10px sans-serif;
@@ -18,25 +33,24 @@
 	</style>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-	<svg class="lienzo"></svg>
+	
 	<script type="text/javascript" src="js/solicitud.js"></script>
 	<script type="text/javascript">
-	$.get("http://192.168.03:3000/api/datas/400?key=asdf",organiza);
-	function organiza(datos){
+	$.get("http://192.168.0.4:3000/api/datas/400?key=asdf",solicitud);
+	/*function organiza(datos){
 		console.log(datos);
 		$('#titulo').text(datos.description);
 		//carga(datos.datas[2008],"azul");
 		carga(datos.datas[2010],"azul"); 
 		carga(datos.datas[2011],"rojo");
-		var r = new Array();
-		r=filtro(datos.datas);
-		console.log("r: "+r[1][3]);
-	}
+		
+	}*/
 	
 	</script>
 	<title>PRUEBA 3</title>
 </head>
 <body>
 	<div id="titulo"></div>
+	<svg class="lienzo"></svg>
 </body>
 </html>
