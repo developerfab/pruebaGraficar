@@ -1,0 +1,38 @@
+.azul{
+	  fill: steelblue;
+}
+.rojo{
+	fill:red;
+}
+.verde{
+	fill:green;
+}
+.amarillo{
+	fill:yellow;
+}
+.morado{
+	fill:violet;
+}
+.rosa{
+	fill:pink;
+}
+.negro{
+	fill:black;
+}
+.lienzo text {
+	fill: black;
+  	font: 10px sans-serif;
+  	text-anchor: middle;
+}
+.eje text {
+	font: 10px sans-serif;
+}
+.eje path,
+.eje line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+.eje text {
+	font: 10px sans-serif;
+}

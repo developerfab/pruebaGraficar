@@ -1,6 +1,21 @@
 
 var bar =null;
 
+var eje = false;
+//Tamaño del lienzo	
+
+var margen = {top: 0, right: 0, bottom: 2, left: 30},
+    	width = 960 - margen.left - margen.right,
+    	height = 500 - margen.top - margen.bottom;
+
+var y = d3.scale.linear()
+	    .range([height, 0]);
+
+var x = d3.scale.ordinal()
+	  	.rangeRoundBands([0, width], .1);
+
+var zero = d3.format(" ");
+
 /** solicitud
 *Esta funcion se encarga de realizar la solicitud al servidor
 */
@@ -9,79 +24,132 @@ function solicitud(frase){
 	var contenedor = new Array();
 	//consulta y asignacion
 	contenedor=filtro(frase.datas);
-	console.log(contenedor);
 	//el largo total de años a graficar en un solo dato
 	var largo_subllave = contenedor[0].length;
 	//cantidad total de datos a plasmar en el eje x
 	var cant_datos = contenedor.length;
-
-	var aux;
-	for(i=cant_datos-1;i>=0;i--){
-		for(j=largo_subllave-1;j>=0;j--){
-			//console.log(i,j,contenedor[i][j]);
-			aux = contenedor[i][j][1];
-			carga(aux,asig_color(contenedor[i][j][0]),cant_datos,i,contenedor[cant_datos-1][largo_subllave-1][1]);
+	var maximo=0;
+	var aux,pos_dato;
+	
+	//se calcula el valor maximo contenido en el arreglo
+	for(var x = 0;x<cant_datos;x++){
+		if(maximo<contenedor[x][largo_subllave-1][1]){
+				maximo=contenedor[cant_datos-1][largo_subllave-1][1];
+			}
+	}
+	//se grafican los datos
+	for(i =largo_subllave-1;i>=0;i--){
+		for(j=0;j<cant_datos;j++){
+			
+			pos_dato = j;
+			aux = contenedor[j][i][1];
+			carga(aux,asig_color(contenedor[j][i][0]),cant_datos,pos_dato,maximo);
 		}
 	}
-	//$.get(frase,carga);
+	
+	//se establecen los valores o limites a escribir en el eje y
+	maximo= maximo/10;
+	var valor_ejeY = new Array();
+	for(var i =0;i<=10;i++){
+		valor_ejeY[i]=maximo*i;
+	}
+	margenEje(valor_ejeY);
+
 }
+/** margenEje
+* Esta funcion se encarga de pintar los ejes en la grafica
+*/
+function margenEje(max){
+
+	var width = 980,
+    height = 500;
+	/*   margenes y ejes   */
+	
+    var margen_lienzo= d3.select(".lienzo")
+    	.attr("width", width + margen.left + margen.right)
+    	.attr("height", height + margen.top + margen.bottom)
+  		.append("g")
+    	.attr("transform", "translate(" + margen.left + "," + margen.top + ")");
+    var ejeX = d3.svg.axis()
+    	.scale(x)
+    	.orient("bottom")
+    	.tickValues([1,2,3]);
+    var ejeY = d3.svg.axis()
+    	.scale(y)
+    	.orient("left")
+    	.tickValues(max)
+    	.ticks(10,'g');
+    margen_lienzo.append("g")
+    	.attr("class", "eje x")
+    	.attr("transform", "translate(0," + height + ")")
+   		.call(ejeX);
+	margen_lienzo.append("g")
+      	.attr("class", "eje y")
+      	.call(ejeY)
+      .append('text')
+      	.attr("transform", "rotate(-90)")
+    	.attr("y", 6)
+    	.attr("dy", ".71em")
+    	.style("text-anchor", "end")
+    	.text("frecuencia");
+
+    eje = true;
+}
+
+/**cargar_bar
+* Esta function se encarga de crear los espacios para pintar las barras en la grafica
+*/
+var pos_actual=0;
 function cargar_bar(lienzo,data,pos_dato,barWidth){
 	if(bar!=null){
-		bar=bar.data(data)
-	    	.enter().append("g")
-	    	.attr("transform", function(d) {return "translate(" + pos_dato * barWidth + ",0)"; });
+		bar=bar.data(data);
+	    bar=bar.attr("transform", function(d) {return "translate(" + 0 + ",0)"; });
 		return bar;
 	}
 	else{
 		bar = lienzo.selectAll("g")
 	    	.data(data)
 	    	.enter().append("g")
-	    	.attr("transform", function(d) {return "translate(" + pos_dato * barWidth + ",0)"; });
+	    	.attr("transform", function(d) {return "translate(" + 0 + ",0)"; });
 	   	return bar;
 	}
 	
 }
 /** carga
 * Esta funcion se encarga de graficar los datos enviados a través del parametro
-* dato: Es el valor a graficar
+* valor_dato: Es el valor a graficar
 * color: color del que se graficara el valor
 * cant_datos: es la cantidad de datos a lo largo del eje x a graficar (dominio)
 * pos_dato: es la posicion del dato en la que se debe graficar
 * maximo: Es el mayor de todos los datos, su funcion es establecer la regla para determinar el rango
 */
-function carga(dato,color,cant_datos,pos_dato,maximo){
-//Tamaño del lienzo	
-	//console.log(data, color,cant_datos,pos_dato);
-	var data = [dato]
-	var width = 960,
-    	height = 500;
-
+function carga(valor_dato,color,cant_datos,pos_dato,maximo){
+		
+	var data = [valor_dato]
+	
+   	var width = 960,
+    height = 500;
+	
 	var y = d3.scale.linear()
 	    .range([height, 0]);
-	
 	//asignacion de la clase y del tamaño del lienzo
 	var lienzo = d3.select(".lienzo")
 	    .attr("width", width)
 	    .attr("height", height);
-	//asignacion de la informacion requerida
-	//data = data.datas[2008];
-	//Se separan las llaves y los datos
-	/*var llaves = Object.keys(data);
-	var claves= new Array;
-	for(var i=0;i<llaves.length;i++){
-		claves[i]=data[llaves[i]];
-	}*/
+
 	//--------------------- GRAFICACION ---------------------------
 	//dominio de la grafica
-	y.domain([0, /*cant_datosd3.max(data, function(d) { return d; })*/maximo]);
-	var barWidth = width / /*Object.keys(data).length;*/cant_datos;
+	y.domain([0, maximo]);
+
+	var barWidth = width / cant_datos;
 	
 	cargar_bar(lienzo,data,pos_dato,barWidth);
 	
 	bar.append("rect")
 	    .attr("class", color)
+	    .attr("x", function(d) { return 30+ pos_dato * barWidth; })
 	    .attr("y", function(d) { return y(d); })
-	    .attr("height", function(d) { console.log('d: '+d);return height-y(d); })
+	    .attr("height", function(d) { return height-y(d); })
 	    .attr("width", barWidth - 1);
 	 
 	bar.append("text")

@@ -1,51 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<style>
-
-	.azul{
-	  fill: steelblue;
-	}
-	.rojo{
-		fill:red;
-	}
-	.verde{
-		fill:green;
-	}
-	.amarillo{
-		fill:yellow;
-	}
-	.morado{
-		fill:violet;
-	}
-	.rosa{
-		fill:pink;
-	}
-	.negro{
-		fill:black;
-	}
-	.lienzo text {
-	  fill: white;
-	  font: 10px sans-serif;
-	  text-anchor: middle;
-	}
-
-	</style>
+	<link rel="stylesheet" type="text/css" href="css/estilo.css">
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
 	
 	<script type="text/javascript" src="js/solicitud.js"></script>
 	<script type="text/javascript">
-	$.get("http://192.168.0.4:3000/api/datas/400?key=asdf",solicitud);
-	/*function organiza(datos){
-		console.log(datos);
-		$('#titulo').text(datos.description);
-		//carga(datos.datas[2008],"azul");
-		carga(datos.datas[2010],"azul"); 
-		carga(datos.datas[2011],"rojo");
-		
-	}*/
-	
+	$.get("http://192.168.0.4:3000/api/datas/300?key=asdf",solicitud);	
 	</script>
 	<title>PRUEBA 3</title>
 </head>
