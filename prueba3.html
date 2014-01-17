@@ -7,12 +7,56 @@
 	
 	<script type="text/javascript" src="js/solicitud.js"></script>
 	<script type="text/javascript">
-	$.get("http://192.168.0.4:3000/api/datas/300?key=asdf",solicitud);	
+	//$.get("http://192.168.0.4:3000/api/datas/300?key=asdf",solicitud);	
+	//se colocan las referencias de color
+	var diccionario = {
+		"_id": 400,
+  		"name": "P384",
+  		"description": "Comité de Ética Hospitalaria",
+  		"dataset": "52c8bfb600fd33ce1e000004",
+  		"typeResponse": "simple",
+		"datas" : {
+			"2006" : {
+				"1" : 607,
+				"2" : 450,
+				"3" : 573,
+				"4" : 802,
+				"5" : 1023
+			},
+			"2007" : {
+				"1" : 508,
+				"2" : 1058,
+				"3" : 203,
+				"4" : 889,
+				"5" : 1520
+			},
+			"2008" : {
+				"1" : 705,
+				"2" : 102,
+				"3" : 1585,
+				"4" : 1268,
+				"5" : 176
+			},
+			"2009" : {
+				"1" : 1025,
+				"2" : 3587,
+				"3" : 479,
+				"4" : 369,
+				"5" : 152
+			}
+		}
+	};
+	console.log(diccionario, typeof(diccionario));
+	setTimeout(function(){
+		solicitud(diccionario);
+		
+	}, 1000);
 	</script>
 	<title>PRUEBA 3</title>
 </head>
 <body>
 	<div id="titulo"></div>
 	<svg class="lienzo"></svg>
+	<div id="referencia"></div>
 </body>
 </html>

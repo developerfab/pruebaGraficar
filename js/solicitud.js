@@ -20,6 +20,7 @@ var zero = d3.format(" ");
 *Esta funcion se encarga de realizar la solicitud al servidor
 */
 function solicitud(frase){
+	
 	//contenedor que contendra la informacion filtrada y organizada
 	var contenedor = new Array();
 	//consulta y asignacion
@@ -37,6 +38,9 @@ function solicitud(frase){
 				maximo=contenedor[cant_datos-1][largo_subllave-1][1];
 			}
 	}
+	console.log('maximo: ', maximo);
+	maximo *= 1.3;
+
 	//se grafican los datos
 	for(i =largo_subllave-1;i>=0;i--){
 		for(j=0;j<cant_datos;j++){
@@ -102,11 +106,14 @@ function margenEje(max){
 var pos_actual=0;
 function cargar_bar(lienzo,data,pos_dato,barWidth){
 	if(bar!=null){
+		console.log("entra if");
 		bar=bar.data(data);
+		console.log(bar);
 	    bar=bar.attr("transform", function(d) {return "translate(" + 0 + ",0)"; });
 		return bar;
 	}
 	else{
+		console.log("entra else");
 		bar = lienzo.selectAll("g")
 	    	.data(data)
 	    	.enter().append("g")
@@ -124,7 +131,7 @@ function cargar_bar(lienzo,data,pos_dato,barWidth){
 * maximo: Es el mayor de todos los datos, su funcion es establecer la regla para determinar el rango
 */
 function carga(valor_dato,color,cant_datos,pos_dato,maximo){
-		
+		console.log(valor_dato,color,cant_datos,pos_dato,maximo);
 	var data = [valor_dato]
 	
    	var width = 960,
@@ -147,13 +154,13 @@ function carga(valor_dato,color,cant_datos,pos_dato,maximo){
 	
 	bar.append("rect")
 	    .attr("class", color)
-	    .attr("x", function(d) { return 30+ pos_dato * barWidth; })
+	    .attr("x", function(d) { return 30+ barWidth*(pos_dato +0.1); })
 	    .attr("y", function(d) { return y(d); })
 	    .attr("height", function(d) { return height-y(d); })
-	    .attr("width", barWidth - 1);
+	    .attr("width", barWidth*0.8);
 	 
 	bar.append("text")
-	    .attr("x", barWidth / 2)
+	    .attr("x", barWidth*pos_dato+30+barWidth/2)
 	    .attr("y", function(d) { return y(d) + 3; })
 	    .attr("dy", ".75em")
 	    .text(function(d) { return d; });
@@ -164,6 +171,7 @@ function carga(valor_dato,color,cant_datos,pos_dato,maximo){
 * @return: contenedor: es una matriz con los elementos necesarios a retornar.
 */
 function filtro(data){
+	console.log('datas: ',data);
 	//llaves externas del diccionario data
 	var llaves = Object.keys(data);
 	//contenedor que tendra la informacion a retornar
@@ -176,6 +184,18 @@ function filtro(data){
 	var aux = null;
 	//asignacion de las llaves mas pequeñas de un arreglo
 	subllaves = Object.keys(data[llaves[0]]);
+
+	var tmp=null;
+	//se comprueba si el es arreglo mas largo
+	for(var i = 1; i<llaves.length;i++){
+		tmp = Object.keys(data[llaves[i]]);
+		for(var j = 0;j<tmp.length;j++){
+			if(subllaves[tmp[j]]==undefined){
+				subllaves.push(tmp[j]);
+			}
+		}
+		
+	}
 	//se hace el filtro
 	for (var i = 0; i < subllaves.length ; i++) {
 		//se crea un nuevo arreglo
@@ -187,23 +207,28 @@ function filtro(data){
 			tupla[0]=llaves[j];
 			//se asigna el dato
 			tupla[1]=data[llaves[j]][subllaves[i]];
-			//se asigna la tupla al respectivo dato filtrado
-			aux[j] = tupla;
-			tupla = null;
+			//si el dato es indefinido se resigna el dato
+			if(tupla[1]==undefined){
+				tupla[1]=0;
 		}
-		//se asigna el filtro asignado en auxiliar al contenedor
-		contenedor[i]=aux;
-		aux=null;
+		//se asigna la tupla al respectivo dato filtrado
+		aux[j] = tupla;
+		tupla = null;
+	}
+	//se asigna el filtro asignado en auxiliar al contenedor
+	contenedor[i]=aux;
+	aux=null;
 	}
 	//se ordenan los datos antes de ser retornados
 	for(var n=0;n<contenedor.length;n++){
 		contenedor[n]=ordenar(contenedor[n]);
 	}
+	console.log('contenedor: ',contenedor);
 	return contenedor;
 }
 
 /** ordenar
-* Esta funcion se encarga  de ordenar los datos mediante insecion antes de ser graficados
+* Esta funcion se encarga  de ordenar los datos mediante insercion antes de ser graficados
 */
 function ordenar(dato){
 	var tam = dato.length;
@@ -227,27 +252,35 @@ function asig_color(anio){
 	switch(anio){
 		case '2006': 
 					color_r = "rojo";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 		case '2007':
 					color_r = "azul";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 		case '2008':
 					color_r = "verde";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 		case '2009':
 					color_r = "amarillo";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 		case '2010':
 					color_r = "negro";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 		case '2011':
 					color_r = "morado";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 		case '2012':
 					color_r = "rosa";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 		default:
 					color_r="negro";
+					//$('#referencia').append("div").attr("class=",color_r);
 					break;
 	}
 	return color_r;
