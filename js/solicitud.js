@@ -14,10 +14,40 @@ var y = d3.scale.linear()
 var x = d3.scale.ordinal()
 	  	.rangeRoundBands([0, width], .1);
 
-var zero = d3.format(" ");
+var pos_actual=0;
+
+function aniovsDato(frase){
+	//diccionario con todos los datos
+	var data = frase.datas;
+	var llave = Object.keys(data);
+	var contenedor = new Array();
+	var tupla = new Array();
+	var subllaves = null;
+	var aux = new Array();
+	//tupla = new Array();
+	//		aux = new Array();
+	console.log('llave ',llave);
+	for(var i = 0; i<llave.length;i++){
+		
+		subllaves = Object.keys(data[llave[i]]);
+		console.log('subllaves ', subllaves);
+		for(var j = 0 ; j<subllaves.length;j++){
+
+			//anio en cuestion
+			tupla[0] = llave[i];
+			//subllave
+			tupla[1] = subllaves[j];
+			//dato de la subllave
+			tupla[2] = data[llave[i]][subllaves[j]];
+			aux[j]=tupla;
+		}
+		contenedor[i]=aux;		
+	}
+	console.log('contenedor ', contenedor);
+}
 
 /** solicitud
-*Esta funcion se encarga de realizar la solicitud al servidor
+*Esta funcion se encarga de realizar la solicitud al servidor para grafica dato vs cantidad
 */
 function solicitud(frase){
 	
@@ -33,16 +63,16 @@ function solicitud(frase){
 	var aux,pos_dato;
 	
 	//se calcula el valor maximo contenido en el arreglo
+
 	for(var x = 0;x<cant_datos;x++){
 		if(maximo<contenedor[x][largo_subllave-1][1]){
-				maximo=contenedor[cant_datos-1][largo_subllave-1][1];
+				maximo=contenedor[x][largo_subllave-1][1];
 			}
 	}
-	console.log('maximo: ', maximo);
 	maximo *= 1.3;
 
 	//se grafican los datos
-	for(i =largo_subllave-1;i>=0;i--){
+	for(i = largo_subllave-1;i>=0;i--){
 		for(j=0;j<cant_datos;j++){
 			
 			pos_dato = j;
@@ -103,17 +133,14 @@ function margenEje(max){
 /**cargar_bar
 * Esta function se encarga de crear los espacios para pintar las barras en la grafica
 */
-var pos_actual=0;
+
 function cargar_bar(lienzo,data,pos_dato,barWidth){
 	if(bar!=null){
-		console.log("entra if");
 		bar=bar.data(data);
-		console.log(bar);
 	    bar=bar.attr("transform", function(d) {return "translate(" + 0 + ",0)"; });
 		return bar;
 	}
 	else{
-		console.log("entra else");
 		bar = lienzo.selectAll("g")
 	    	.data(data)
 	    	.enter().append("g")
@@ -131,7 +158,6 @@ function cargar_bar(lienzo,data,pos_dato,barWidth){
 * maximo: Es el mayor de todos los datos, su funcion es establecer la regla para determinar el rango
 */
 function carga(valor_dato,color,cant_datos,pos_dato,maximo){
-		console.log(valor_dato,color,cant_datos,pos_dato,maximo);
 	var data = [valor_dato]
 	
    	var width = 960,
@@ -171,7 +197,6 @@ function carga(valor_dato,color,cant_datos,pos_dato,maximo){
 * @return: contenedor: es una matriz con los elementos necesarios a retornar.
 */
 function filtro(data){
-	console.log('datas: ',data);
 	//llaves externas del diccionario data
 	var llaves = Object.keys(data);
 	//contenedor que tendra la informacion a retornar
@@ -223,7 +248,7 @@ function filtro(data){
 	for(var n=0;n<contenedor.length;n++){
 		contenedor[n]=ordenar(contenedor[n]);
 	}
-	console.log('contenedor: ',contenedor);
+	
 	return contenedor;
 }
 
