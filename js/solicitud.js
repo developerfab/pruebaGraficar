@@ -17,33 +17,37 @@ var x = d3.scale.ordinal()
 var pos_actual=0;
 
 function aniovsDato(frase){
-	//diccionario con todos los datos
-	var data = frase.datas;
-	var llave = Object.keys(data);
-	var contenedor = new Array();
-	var tupla = new Array();
+	//data: toma la informacion a graficar(datas) y la asigna
+	var data = frase;
+	//llaves: claves principales del data
+	var llaves = Object.keys(data);
+	//subllaves: claves que tiene el data en llaves
 	var subllaves = null;
-	var aux = new Array();
-	//tupla = new Array();
-	//		aux = new Array();
-	console.log('llave ',llave);
-	for(var i = 0; i<llave.length;i++){
+	//tupla:
+	var tupla = null;
+	//aux: variable auxiliar para contener las tuplas de cada año
+	var aux = null;
+	//contenedor: contenedor que contiene todos los datos convertidos para al final ser retornados
+	var contenedor = new Array();
+	for(var i = 0;i<llaves.length;i++){
+		subllaves = Object.keys(data[llaves[i]]);
 		
-		subllaves = Object.keys(data[llave[i]]);
-		console.log('subllaves ', subllaves);
-		for(var j = 0 ; j<subllaves.length;j++){
-
-			//anio en cuestion
-			tupla[0] = llave[i];
-			//subllave
-			tupla[1] = subllaves[j];
-			//dato de la subllave
-			tupla[2] = data[llave[i]][subllaves[j]];
-			aux[j]=tupla;
+		aux = new Array();
+		for(var j = 0; j<subllaves.length;j++){
+			tupla = new Array();
+			tupla[0] = subllaves[j];
+			tupla[1] = data[llaves[i]][subllaves[j]];
+			aux[j] = tupla;
+			tupla = null;
 		}
-		contenedor[i]=aux;		
+		contenedor[i] = aux;
+		aux = null;
 	}
-	console.log('contenedor ', contenedor);
+	//se ordenan los datos antes de ser retornados
+	for(var n=0;n<contenedor.length;n++){
+		contenedor[n]=ordenar(contenedor[n]);
+	}
+	return contenedor;
 }
 
 /** solicitud
@@ -54,7 +58,8 @@ function solicitud(frase){
 	//contenedor que contendra la informacion filtrada y organizada
 	var contenedor = new Array();
 	//consulta y asignacion
-	contenedor=filtro(frase.datas);
+	//contenedor=filtro(frase.datas);
+	contenedor = aniovsDato(frase.datas);
 	//el largo total de años a graficar en un solo dato
 	var largo_subllave = contenedor[0].length;
 	//cantidad total de datos a plasmar en el eje x
@@ -69,6 +74,7 @@ function solicitud(frase){
 				maximo=contenedor[x][largo_subllave-1][1];
 			}
 	}
+	
 	maximo *= 1.3;
 
 	//se grafican los datos
@@ -275,6 +281,21 @@ function ordenar(dato){
 function asig_color(anio){
 	var color_r= "negro";
 	switch(anio){
+		case '1' : 
+					color_r = 'rojo';
+					break;
+		case '2' : 
+					color_r = 'azul';
+					break;
+		case '3' : 
+					color_r = 'verde';
+					break;
+		case '4' : 
+					color_r = 'amarillo';
+					break;
+		case '5' : 
+					color_r = 'negro';
+					break;			
 		case '2006': 
 					color_r = "rojo";
 					//$('#referencia').append("div").attr("class=",color_r);
