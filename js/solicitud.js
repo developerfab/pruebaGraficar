@@ -16,9 +16,11 @@ var x = d3.scale.ordinal()
 
 var pos_actual=0;
 
-function aniovsDato(frase){
-	//data: toma la informacion a graficar(datas) y la asigna
-	var data = frase;
+/** aniovsDato
+* Esta funcion se encarga de filtrar los datos de años como dato general, tupla[0] es el dato y 
+* tupla [1] = es el valor del dato.
+*/
+function aniovsDato(data){
 	//llaves: claves principales del data
 	var llaves = Object.keys(data);
 	//subllaves: claves que tiene el data en llaves
@@ -31,22 +33,28 @@ function aniovsDato(frase){
 	var contenedor = new Array();
 	for(var i = 0;i<llaves.length;i++){
 		subllaves = Object.keys(data[llaves[i]]);
-		
 		aux = new Array();
 		for(var j = 0; j<subllaves.length;j++){
-			tupla = new Array();
-			tupla[0] = subllaves[j];
-			tupla[1] = data[llaves[i]][subllaves[j]];
-			aux[j] = tupla;
-			tupla = null;
+			if(subllaves[j]!="empty"&&subllaves[j]!=""){
+				tupla = new Array();
+				tupla[0] = subllaves[j];
+				tupla[1] = data[llaves[i]][subllaves[j]];
+				aux[j] = tupla;
+				tupla = null;
+			}
 		}
-		contenedor[i] = aux;
+		if(aux.length>0){
+			contenedor.push(aux);
+		}
+		else
 		aux = null;
 	}
+	console.log('sin ordenar: ', contenedor);
 	//se ordenan los datos antes de ser retornados
 	for(var n=0;n<contenedor.length;n++){
 		contenedor[n]=ordenar(contenedor[n]);
 	}
+	console.log('con ordenado: ', contenedor);
 	return contenedor;
 }
 
@@ -61,50 +69,45 @@ function solicitud(frase){
 	//contenedor=filtro(frase.datas);
 	contenedor = aniovsDato(frase.datas);
 	//el largo total de años a graficar en un solo dato
-	var largo_subllave = contenedor[0].length;
+	var largo_subllave = null;
 	//cantidad total de datos a plasmar en el eje x
 	var cant_datos = contenedor.length;
+	//valor del dato maximo los arreglos
 	var maximo=0;
 	var aux,pos_dato;
-	
 	//se calcula el valor maximo contenido en el arreglo
-
 	for(var x = 0;x<cant_datos;x++){
+		largo_subllave= contenedor[x].length;
 		if(maximo<contenedor[x][largo_subllave-1][1]){
 				maximo=contenedor[x][largo_subllave-1][1];
 			}
 	}
-	
+	//se reevalua el dato maximo
 	maximo *= 1.3;
-
 	//se grafican los datos
 	for(i = largo_subllave-1;i>=0;i--){
 		for(j=0;j<cant_datos;j++){
-			
 			pos_dato = j;
 			aux = contenedor[j][i][1];
 			carga(aux,asig_color(contenedor[j][i][0]),cant_datos,pos_dato,maximo);
 		}
 	}
-	
 	//se establecen los valores o limites a escribir en el eje y
 	maximo= maximo/10;
 	var valor_ejeY = new Array();
 	for(var i =0;i<=10;i++){
 		valor_ejeY[i]=maximo*i;
 	}
+	//se colocan los ejes
 	margenEje(valor_ejeY);
-
 }
 /** margenEje
 * Esta funcion se encarga de pintar los ejes en la grafica
 */
 function margenEje(max){
-
 	var width = 980,
     height = 500;
 	/*   margenes y ejes   */
-	
     var margen_lienzo= d3.select(".lienzo")
     	.attr("width", width + margen.left + margen.right)
     	.attr("height", height + margen.top + margen.bottom)
@@ -113,7 +116,14 @@ function margenEje(max){
     var ejeX = d3.svg.axis()
     	.scale(x)
     	.orient("bottom")
-    	.tickValues([1,2,3]);
+    	.ticks([1,2,3]);
+    //se pintan valores en la escala de y
+	/*margen_lienzo.append("text")
+	    .attr("x", 0)
+	    .attr("y", function(d) { return y(d) + 3; })
+	    .attr("dy", ".75em")
+	    .text(function(d) { return d; });
+    */
     var ejeY = d3.svg.axis()
     	.scale(y)
     	.orient("left")
@@ -132,7 +142,6 @@ function margenEje(max){
     	.attr("dy", ".71em")
     	.style("text-anchor", "end")
     	.text("frecuencia");
-
     eje = true;
 }
 
@@ -196,6 +205,7 @@ function carga(valor_dato,color,cant_datos,pos_dato,maximo){
 	    .attr("y", function(d) { return y(d) + 3; })
 	    .attr("dy", ".75em")
 	    .text(function(d) { return d; });
+	
 	}
 
 /** filtro
@@ -262,6 +272,7 @@ function filtro(data){
 * Esta funcion se encarga  de ordenar los datos mediante insercion antes de ser graficados
 */
 function ordenar(dato){
+	console.log('dato: ',dato)
 	var tam = dato.length;
 	var temp,temp2,j;
 	for(var i = 0;i<tam;i++){
